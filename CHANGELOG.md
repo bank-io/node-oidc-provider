@@ -1,6 +1,159 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [6.29.9](https://github.com/panva/node-oidc-provider/compare/v6.29.8...v6.29.9) (2020-12-10)
+
+
+### Bug Fixes
+
+* **typescript:** interaction result may be undefined ([#833](https://github.com/panva/node-oidc-provider/issues/833)) ([44aa53e](https://github.com/panva/node-oidc-provider/commit/44aa53eb0630560eba563d13372b14424daf7f22))
+* unrecognized EC curves and OKP subtypes are ignored ([660f46d](https://github.com/panva/node-oidc-provider/commit/660f46d25f5d5fe8e0df0ce0cfdb3a8d8708a3ef))
+
+## [6.29.8](https://github.com/panva/node-oidc-provider/compare/v6.29.7...v6.29.8) (2020-11-30)
+
+
+### Bug Fixes
+
+* ignore client metadata valued `undefined` when applying defualts ([d0ee50a](https://github.com/panva/node-oidc-provider/commit/d0ee50a23271d1d6655b6552e2fa92e1d049904c)), closes [#824](https://github.com/panva/node-oidc-provider/issues/824)
+
+## [6.29.7](https://github.com/panva/node-oidc-provider/compare/v6.29.6...v6.29.7) (2020-11-10)
+
+
+### Bug Fixes
+
+* client keystore refresh keeps the derived octet keys in store ([024841e](https://github.com/panva/node-oidc-provider/commit/024841e82ddb5b4ffdd2c66504381f02c6219de8)), closes [#816](https://github.com/panva/node-oidc-provider/issues/816)
+
+## [6.29.6](https://github.com/panva/node-oidc-provider/compare/v6.29.5...v6.29.6) (2020-11-08)
+
+
+### Bug Fixes
+
+* ensure decrypted request object is accessed in PAR responses ([09751d7](https://github.com/panva/node-oidc-provider/commit/09751d75c770ab0b3a9032239abd4ca7b7cba7cf)), closes [#813](https://github.com/panva/node-oidc-provider/issues/813)
+
+## [6.29.5](https://github.com/panva/node-oidc-provider/compare/v6.29.4...v6.29.5) (2020-10-03)
+
+
+### Bug Fixes
+
+* loopback redirectUriAllowed protocol check ([#794](https://github.com/panva/node-oidc-provider/issues/794)) ([da99330](https://github.com/panva/node-oidc-provider/commit/da993300c2237e794f012b679c483d42c1d9e423))
+
+## [6.29.4](https://github.com/panva/node-oidc-provider/compare/v6.29.3...v6.29.4) (2020-09-19)
+
+
+### Bug Fixes
+
+* **typescript:** findAccount may return undefined ([#786](https://github.com/panva/node-oidc-provider/issues/786)) ([6689cdb](https://github.com/panva/node-oidc-provider/commit/6689cdb7edeb6e66f70446fb3e7c1266debc631e))
+* updated request object mime-type as per draft-ietf-oauth-jwsreq-30 ([f15524a](https://github.com/panva/node-oidc-provider/commit/f15524a049722d2b3c5eb95c31ff0950e930bf29))
+
+## [6.29.3](https://github.com/panva/node-oidc-provider/compare/v6.29.2...v6.29.3) (2020-08-25)
+
+
+### Bug Fixes
+
+* **typescript:** allows adapter factory in typings ([#776](https://github.com/panva/node-oidc-provider/issues/776)) ([3cfcd77](https://github.com/panva/node-oidc-provider/commit/3cfcd778cb3a9bdecac0ad51dec062daa187e6b0))
+
+## [6.29.2](https://github.com/panva/node-oidc-provider/compare/v6.29.1...v6.29.2) (2020-08-20)
+
+
+### Bug Fixes
+
+* **typescript:** extend AdapterPayload from AnyClientMetadata ([6631a2d](https://github.com/panva/node-oidc-provider/commit/6631a2d6e43b30ad90a1f2c1e4bdff1fe3686715)), closes [#774](https://github.com/panva/node-oidc-provider/issues/774)
+
+## [6.29.1](https://github.com/panva/node-oidc-provider/compare/v6.29.0...v6.29.1) (2020-08-13)
+
+
+### Bug Fixes
+
+* **typescript:** add missing rpInitiatedLogout types ([59c389b](https://github.com/panva/node-oidc-provider/commit/59c389b6e78cd4e9968d575dbaf5824edc8a1464))
+
+## [6.29.0](https://github.com/panva/node-oidc-provider/compare/v6.28.0...v6.29.0) (2020-08-12)
+
+
+### Features
+
+* allow RP-Initiated Logout 1.0 feature to be disabled ([a2ef044](https://github.com/panva/node-oidc-provider/commit/a2ef0449fd5102f3b09218189744be592818859b))
+* update backchannelLogout feature draft version ([9a9dd7e](https://github.com/panva/node-oidc-provider/commit/9a9dd7e754cf509f2ae8cb82193ce79627e5ec4a))
+* update frontchannelLogout feature draft version ([d54cc8f](https://github.com/panva/node-oidc-provider/commit/d54cc8f8caf145aaa3959f1b3b7eb202e4072976))
+* update sessionManagement feature draft version ([aa62927](https://github.com/panva/node-oidc-provider/commit/aa62927ebe8d3832d3dd63de95bddd2590ea6d6f))
+
+## [6.28.0](https://github.com/panva/node-oidc-provider/compare/v6.27.5...v6.28.0) (2020-07-14)
+
+
+### Bug Fixes
+
+* ensure client is still valid after custom metadata processing ([fded7c6](https://github.com/panva/node-oidc-provider/commit/fded7c674199668321f08af15be4f0a01092d4c1))
+
+
+### Features
+
+* incorporate behaviours and metadata from jwsreq-25 ([cb12761](https://github.com/panva/node-oidc-provider/commit/cb12761bf15b877d3bf878eea7f1fbd267a020ea))
+* update PAR implementation to ietf draft 02 ([fd2ccee](https://github.com/panva/node-oidc-provider/commit/fd2ccee437572e01c1afb60b58d5386b93d5e992))
+
+
+
+## [6.27.5](https://github.com/panva/node-oidc-provider/compare/v6.27.4...v6.27.5) (2020-07-06)
+
+
+
+## [6.27.4](https://github.com/panva/node-oidc-provider/compare/v6.27.3...v6.27.4) (2020-06-30)
+
+
+
+## [6.27.3](https://github.com/panva/node-oidc-provider/compare/v6.27.2...v6.27.3) (2020-06-19)
+
+
+### Bug Fixes
+
+* re-allow transfer-encoding chunked ([f88447b](https://github.com/panva/node-oidc-provider/commit/f88447bf989a208d7e0490dbe3226c534259c442)), closes [#739](https://github.com/panva/node-oidc-provider/issues/739)
+
+
+
+## [6.27.2](https://github.com/panva/node-oidc-provider/compare/v6.27.1...v6.27.2) (2020-06-16)
+
+
+### Bug Fixes
+
+* remove unintended client_id from post_logout_redirect_uri callbacks ([57d07cd](https://github.com/panva/node-oidc-provider/commit/57d07cd14a6d18681ee0953c28f4ebe7fda3681c))
+
+
+
+## [6.27.1](https://github.com/panva/node-oidc-provider/compare/v6.27.0...v6.27.1) (2020-06-15)
+
+
+### Bug Fixes
+
+* correct jwtIntrospection draft ack version ([#735](https://github.com/panva/node-oidc-provider/issues/735)) ([62b97d4](https://github.com/panva/node-oidc-provider/commit/62b97d4e6a47cbbbe2d9216a31988a6d442689bf))
+* **typescript:** static IdToken.validate ([#733](https://github.com/panva/node-oidc-provider/issues/733)) ([a0d997e](https://github.com/panva/node-oidc-provider/commit/a0d997e9a8653cddaa95ae31b0bea6bdaa1e0267))
+
+
+
+## [6.27.0](https://github.com/panva/node-oidc-provider/compare/v6.26.1...v6.27.0) (2020-06-01)
+
+
+### Bug Fixes
+
+* allow any JSON numeric value for timestamp values for DPoP JWTs ([0700fde](https://github.com/panva/node-oidc-provider/commit/0700fde4e9fb6b4b0a718fb323d1e3d955a1be43))
+
+
+### Features
+
+* secp256k1 EC curve and ES256K JWS alg feature flag removed ([f74f6bd](https://github.com/panva/node-oidc-provider/commit/f74f6bdf3eea8b6e97c735b697e49779a70b4d1c))
+
+
+### BREAKING CHANGES
+
+* secp256k1 and ES256K have been registered in IANA a few
+days ago so the flag is not needed anymore.
+
+Note: Updates to draft specification versions are released as MINOR
+library versions, if you utilize these specification implementations
+consider using the tilde `~` operator in your package.json since
+breaking changes may be introduced as part of these version updates.
+Alternatively, [acknowledge](/docs/README.md#features) the version and
+be notified of breaking changes as part of your CI.
+
+
 
 ## [6.26.1](https://github.com/panva/node-oidc-provider/compare/v6.26.0...v6.26.1) (2020-05-18)
 
@@ -12,7 +165,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-# [6.26.0](https://github.com/panva/node-oidc-provider/compare/v6.25.0...v6.26.0) (2020-05-12)
+## [6.26.0](https://github.com/panva/node-oidc-provider/compare/v6.25.0...v6.26.0) (2020-05-12)
 
 
 ### Bug Fixes
@@ -26,7 +179,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-# [6.25.0](https://github.com/panva/node-oidc-provider/compare/v6.24.0...v6.25.0) (2020-05-05)
+## [6.25.0](https://github.com/panva/node-oidc-provider/compare/v6.24.0...v6.25.0) (2020-05-05)
 
 
 ### Bug Fixes
@@ -53,7 +206,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.24.0](https://github.com/panva/node-oidc-provider/compare/v6.23.5...v6.24.0) (2020-04-27)
+## [6.24.0](https://github.com/panva/node-oidc-provider/compare/v6.23.5...v6.24.0) (2020-04-27)
 
 
 ### Bug Fixes
@@ -115,7 +268,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.23.0](https://github.com/panva/node-oidc-provider/compare/v6.22.1...v6.23.0) (2020-03-03)
+## [6.23.0](https://github.com/panva/node-oidc-provider/compare/v6.22.1...v6.23.0) (2020-03-03)
 
 
 ### Bug Fixes
@@ -140,7 +293,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.22.0](https://github.com/panva/node-oidc-provider/compare/v6.21.1...v6.22.0) (2020-02-28)
+## [6.22.0](https://github.com/panva/node-oidc-provider/compare/v6.21.1...v6.22.0) (2020-02-28)
 
 
 ### Bug Fixes
@@ -163,7 +316,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.21.0](https://github.com/panva/node-oidc-provider/compare/v6.20.3...v6.21.0) (2020-02-18)
+## [6.21.0](https://github.com/panva/node-oidc-provider/compare/v6.20.3...v6.21.0) (2020-02-18)
 
 
 ### Features
@@ -199,7 +352,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.20.0](https://github.com/panva/node-oidc-provider/compare/v6.19.2...v6.20.0) (2020-01-31)
+## [6.20.0](https://github.com/panva/node-oidc-provider/compare/v6.19.2...v6.20.0) (2020-01-31)
 
 
 ### Features
@@ -226,7 +379,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.19.0](https://github.com/panva/node-oidc-provider/compare/v6.18.2...v6.19.0) (2020-01-23)
+## [6.19.0](https://github.com/panva/node-oidc-provider/compare/v6.18.2...v6.19.0) (2020-01-23)
 
 
 ### Features
@@ -254,7 +407,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.18.0](https://github.com/panva/node-oidc-provider/compare/v6.17.7...v6.18.0) (2019-12-31)
+## [6.18.0](https://github.com/panva/node-oidc-provider/compare/v6.17.7...v6.18.0) (2019-12-31)
 
 
 ### Features
@@ -326,7 +479,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.17.0](https://github.com/panva/node-oidc-provider/compare/v6.16.1...v6.17.0) (2019-12-02)
+## [6.17.0](https://github.com/panva/node-oidc-provider/compare/v6.16.1...v6.17.0) (2019-12-02)
 
 
 ### Features
@@ -344,7 +497,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.16.0](https://github.com/panva/node-oidc-provider/compare/v6.15.2...v6.16.0) (2019-11-16)
+## [6.16.0](https://github.com/panva/node-oidc-provider/compare/v6.15.2...v6.16.0) (2019-11-16)
 
 
 ### Features
@@ -366,7 +519,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.15.0](https://github.com/panva/node-oidc-provider/compare/v6.14.2...v6.15.0) (2019-11-14)
+## [6.15.0](https://github.com/panva/node-oidc-provider/compare/v6.14.2...v6.15.0) (2019-11-14)
 
 
 ### Bug Fixes
@@ -400,7 +553,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.14.0](https://github.com/panva/node-oidc-provider/compare/v6.13.0...v6.14.0) (2019-11-07)
+## [6.14.0](https://github.com/panva/node-oidc-provider/compare/v6.13.0...v6.14.0) (2019-11-07)
 
 
 ### Bug Fixes
@@ -415,7 +568,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.13.0](https://github.com/panva/node-oidc-provider/compare/v6.12.13...v6.13.0) (2019-10-31)
+## [6.13.0](https://github.com/panva/node-oidc-provider/compare/v6.12.13...v6.13.0) (2019-10-31)
 
 
 ### Features
@@ -533,7 +686,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.12.0](https://github.com/panva/node-oidc-provider/compare/v6.11.1...v6.12.0) (2019-09-27)
+## [6.12.0](https://github.com/panva/node-oidc-provider/compare/v6.11.1...v6.12.0) (2019-09-27)
 
 
 ### Features
@@ -551,7 +704,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.11.0](https://github.com/panva/node-oidc-provider/compare/v6.10.0...v6.11.0) (2019-09-24)
+## [6.11.0](https://github.com/panva/node-oidc-provider/compare/v6.10.0...v6.11.0) (2019-09-24)
 
 
 ### Bug Fixes
@@ -566,7 +719,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.10.0](https://github.com/panva/node-oidc-provider/compare/v6.9.0...v6.10.0) (2019-09-21)
+## [6.10.0](https://github.com/panva/node-oidc-provider/compare/v6.9.0...v6.10.0) (2019-09-21)
 
 
 ### Bug Fixes
@@ -581,7 +734,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.9.0](https://github.com/panva/node-oidc-provider/compare/v6.8.0...v6.9.0) (2019-09-17)
+## [6.9.0](https://github.com/panva/node-oidc-provider/compare/v6.8.0...v6.9.0) (2019-09-17)
 
 
 ### Features
@@ -590,7 +743,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.8.0](https://github.com/panva/node-oidc-provider/compare/v6.7.0...v6.8.0) (2019-09-06)
+## [6.8.0](https://github.com/panva/node-oidc-provider/compare/v6.7.0...v6.8.0) (2019-09-06)
 
 
 ### Features
@@ -600,7 +753,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.7.0](https://github.com/panva/node-oidc-provider/compare/v6.6.2...v6.7.0) (2019-08-30)
+## [6.7.0](https://github.com/panva/node-oidc-provider/compare/v6.6.2...v6.7.0) (2019-08-30)
 
 
 ### Bug Fixes
@@ -638,7 +791,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.6.0](https://github.com/panva/node-oidc-provider/compare/v6.5.0...v6.6.0) (2019-08-23)
+## [6.6.0](https://github.com/panva/node-oidc-provider/compare/v6.5.0...v6.6.0) (2019-08-23)
 
 
 ### Bug Fixes
@@ -652,7 +805,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.5.0](https://github.com/panva/node-oidc-provider/compare/v6.4.2...v6.5.0) (2019-08-20)
+## [6.5.0](https://github.com/panva/node-oidc-provider/compare/v6.4.2...v6.5.0) (2019-08-20)
 
 
 ### Bug Fixes
@@ -688,7 +841,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.4.0](https://github.com/panva/node-oidc-provider/compare/v6.3.0...v6.4.0) (2019-08-07)
+## [6.4.0](https://github.com/panva/node-oidc-provider/compare/v6.3.0...v6.4.0) (2019-08-07)
 
 
 ### Bug Fixes
@@ -705,7 +858,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.3.0](https://github.com/panva/node-oidc-provider/compare/v6.2.2...v6.3.0) (2019-08-04)
+## [6.3.0](https://github.com/panva/node-oidc-provider/compare/v6.2.2...v6.3.0) (2019-08-04)
 
 
 ### Features
@@ -734,7 +887,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.2.0](https://github.com/panva/node-oidc-provider/compare/v6.1.2...v6.2.0) (2019-07-21)
+## [6.2.0](https://github.com/panva/node-oidc-provider/compare/v6.1.2...v6.2.0) (2019-07-21)
 
 
 ### Features
@@ -761,7 +914,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.1.0](https://github.com/panva/node-oidc-provider/compare/v6.0.3...v6.1.0) (2019-07-10)
+## [6.1.0](https://github.com/panva/node-oidc-provider/compare/v6.0.3...v6.1.0) (2019-07-10)
 
 
 ### Bug Fixes
@@ -804,7 +957,7 @@ be notified of breaking changes as part of your CI.
 
 
 
-# [6.0.0](https://github.com/panva/node-oidc-provider/compare/v5.5.5...v6.0.0) (2019-06-28)
+## [6.0.0](https://github.com/panva/node-oidc-provider/compare/v5.5.5...v6.0.0) (2019-06-28)
 
 This release has been on and off in development since the major v5.x release in September 2018, it
 is the biggest and most breaking release to date and a massive accomplishment, most of the new
@@ -1176,7 +1329,6 @@ id_token_hint. See https://bitbucket.org/openid/connect/issues/1032
 
 
 
-<a name="5.5.5"></a>
 ## [5.5.5](https://github.com/panva/node-oidc-provider/compare/v5.5.4...v5.5.5) (2019-02-20)
 
 
@@ -1187,7 +1339,6 @@ id_token_hint. See https://bitbucket.org/openid/connect/issues/1032
 
 
 
-<a name="5.5.4"></a>
 ## [5.5.4](https://github.com/panva/node-oidc-provider/compare/v5.5.3...v5.5.4) (2019-02-15)
 
 
@@ -1196,7 +1347,6 @@ id_token_hint. See https://bitbucket.org/openid/connect/issues/1032
 * removed koa-router in favor of koa-trie-router ([fe812e0](https://github.com/panva/node-oidc-provider/commit/fe812e0)), closes [#436](https://github.com/panva/node-oidc-provider/issues/436)
 
 
-<a name="5.5.3"></a>
 ## [5.5.3](https://github.com/panva/node-oidc-provider/compare/v5.5.2...v5.5.3) (2019-01-22)
 
 
@@ -1206,7 +1356,6 @@ id_token_hint. See https://bitbucket.org/openid/connect/issues/1032
 
 
 
-<a name="5.5.2"></a>
 ## [5.5.2](https://github.com/panva/node-oidc-provider/compare/v5.5.1...v5.5.2) (2018-12-20)
 
 
@@ -1216,7 +1365,6 @@ id_token_hint. See https://bitbucket.org/openid/connect/issues/1032
 
 
 
-<a name="5.5.1"></a>
 ## [5.5.1](https://github.com/panva/node-oidc-provider/compare/v5.5.0...v5.5.1) (2018-11-26)
 
 
@@ -1227,8 +1375,7 @@ id_token_hint. See https://bitbucket.org/openid/connect/issues/1032
 
 
 
-<a name="5.5.0"></a>
-# [5.5.0](https://github.com/panva/node-oidc-provider/compare/v5.4.2...v5.5.0) (2018-11-22)
+## [5.5.0](https://github.com/panva/node-oidc-provider/compare/v5.4.2...v5.5.0) (2018-11-22)
 
 
 ### Bug Fixes
@@ -1243,7 +1390,6 @@ id_token_hint. See https://bitbucket.org/openid/connect/issues/1032
 
 
 
-<a name="5.4.2"></a>
 ## [5.4.2](https://github.com/panva/node-oidc-provider/compare/v5.4.1...v5.4.2) (2018-11-19)
 
 
@@ -1253,7 +1399,6 @@ id_token_hint. See https://bitbucket.org/openid/connect/issues/1032
 
 
 
-<a name="5.4.1"></a>
 ## [5.4.1](https://github.com/panva/node-oidc-provider/compare/v5.4.0...v5.4.1) (2018-11-19)
 
 
@@ -1263,8 +1408,7 @@ id_token_hint. See https://bitbucket.org/openid/connect/issues/1032
 
 
 
-<a name="5.4.0"></a>
-# [5.4.0](https://github.com/panva/node-oidc-provider/compare/v5.3.0...v5.4.0) (2018-11-18)
+## [5.4.0](https://github.com/panva/node-oidc-provider/compare/v5.3.0...v5.4.0) (2018-11-18)
 
 
 ### Bug Fixes
@@ -1281,8 +1425,7 @@ id_token_hint. See https://bitbucket.org/openid/connect/issues/1032
 
 
 
-<a name="5.3.0"></a>
-# [5.3.0](https://github.com/panva/node-oidc-provider/compare/v5.2.0...v5.3.0) (2018-11-05)
+## [5.3.0](https://github.com/panva/node-oidc-provider/compare/v5.2.0...v5.3.0) (2018-11-05)
 
 
 ### Bug Fixes
@@ -1296,8 +1439,7 @@ id_token_hint. See https://bitbucket.org/openid/connect/issues/1032
 
 
 
-<a name="5.2.0"></a>
-# [5.2.0](https://github.com/panva/node-oidc-provider/compare/v5.1.2...v5.2.0) (2018-11-01)
+## [5.2.0](https://github.com/panva/node-oidc-provider/compare/v5.1.2...v5.2.0) (2018-11-01)
 
 
 ### Draft Features
@@ -1314,7 +1456,6 @@ package.json since breaking changes such as this one may be introduced as part o
 
 
 
-<a name="5.1.2"></a>
 ## [5.1.2](https://github.com/panva/node-oidc-provider/compare/v5.1.0...v5.1.2) (2018-10-23)
 
 
@@ -1324,8 +1465,7 @@ package.json since breaking changes such as this one may be introduced as part o
 
 
 
-<a name="5.1.0"></a>
-# [5.1.0](https://github.com/panva/node-oidc-provider/compare/v5.0.1...v5.1.0) (2018-10-03)
+## [5.1.0](https://github.com/panva/node-oidc-provider/compare/v5.0.1...v5.1.0) (2018-10-03)
 
 
 ### Bug Fixes
@@ -1339,13 +1479,11 @@ package.json since breaking changes such as this one may be introduced as part o
 
 
 
-<a name="5.0.1"></a>
 ## [5.0.1](https://github.com/panva/node-oidc-provider/compare/v5.0.0...v5.0.1) (2018-09-27)
 
 
 
-<a name="5.0.0"></a>
-# [5.0.0](https://github.com/panva/node-oidc-provider/compare/v4.8.3...v5.0.0) (2018-09-26)
+## [5.0.0](https://github.com/panva/node-oidc-provider/compare/v4.8.3...v5.0.0) (2018-09-26)
 
 
 ### Bug Fixes

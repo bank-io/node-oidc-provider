@@ -37,6 +37,47 @@ new Provider('https://op.example.com', {
   },
 });
 
+new Provider('https://op.example.com', {
+  adapter: class Adapter {
+    name: string;
+    constructor(name: string) {
+      this.name = name;
+    }
+
+    async upsert(id: string, payload: object, expiresIn: number) {}
+    async consume(id: string) {}
+    async destroy(id: string) {}
+    async revokeByGrantId(grantId: string) {}
+
+    async find(id: string) {
+      return {
+        client_id: '...',
+      };
+    }
+
+    async findByUserCode(userCode: string) {}
+    async findByUid(uid: string) {}
+  }
+});
+
+new Provider('https://op.example.com', {
+  adapter: (name: string) => ({
+    name,
+    async upsert(id: string, payload: object, expiresIn: number) {},
+    async consume(id: string) {},
+    async destroy(id: string) {},
+    async revokeByGrantId(grantId: string) {},
+
+    async find(id: string) {
+      return {
+        client_id: '...',
+      };
+    },
+    async findByUserCode(userCode: string) {},
+    async findByUid(uid: string) {},
+  })
+});
+
 const provider = new Provider('https://op.example.com', {
   acrValues: ['urn:example:bronze'],
   adapter: class Adapter {
@@ -284,15 +325,17 @@ const provider = new Provider('https://op.example.com', {
       token.iat.toFixed();
     }
 
-    return {
-      accountId: sub,
-      async claims() {
-        return {
-          sub,
-          foo: 'bar',
-        };
-      },
-    };
+    if (Math.random() > 0.5) {
+      return {
+        accountId: sub,
+        async claims() {
+          return {
+            sub,
+            foo: 'bar',
+          };
+        },
+      };
+    }
   },
   async rotateRefreshToken(ctx) {
     ctx.oidc.issuer.substring(0);
@@ -341,8 +384,7 @@ const provider = new Provider('https://op.example.com', {
     sessionManagement: { enabled: false, ack: 28, keepHeaders: false, scriptNonce() { return "foo"; } },
     jwtIntrospection: { enabled: false, ack: 'draft-09' },
     jwtResponseModes: { enabled: false, ack: 2 },
-    pushedAuthorizationRequests: { enabled: false, ack: 0 },
-    secp256k1: { enabled: false, ack: 'draft-03' },
+    pushedAuthorizationRequests: { enabled: false, ack: 'draft-02' },
     registration: {
       enabled: true,
       initialAccessToken: true,

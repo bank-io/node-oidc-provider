@@ -3,13 +3,13 @@
 const { createServer } = require('http');
 
 const Mocha = require('mocha');
+const lookupFiles = require('mocha/lib/cli/lookup-files');
 const { all: clearRequireCache } = require('clear-module');
 const sample = require('lodash/sample');
 
 const runtimeSupport = require('../lib/helpers/runtime_support');
 
 const FORMAT_REGEXP = /^--format=([\w-]+)$/;
-
 
 const formats = [];
 process.argv.forEach((arg) => {
@@ -29,7 +29,6 @@ if (!formats.length) {
 }
 const passed = [];
 
-const { utils: { lookupFiles } } = Mocha;
 const files = lookupFiles('test/**/*.test.js', ['js'], true);
 class SuiteFailedError extends Error {}
 
@@ -50,13 +49,19 @@ async function singleRun() {
     global.keystore.generate('EC', 'P-256'),
     runtimeSupport.EdDSA ? global.keystore.generate('OKP', 'Ed25519') : undefined,
   ]);
-  const DEFAULTS = require('../lib/helpers/defaults'); // eslint-disable-line global-require
+  global.TEST_CONFIGURATION_DEFAULTS = {};
   if (this.format === 'jwt-ietf' || typeof this.format === 'function') {
-    DEFAULTS.features.ietfJWTAccessTokenProfile.enabled = true;
-    DEFAULTS.features.ietfJWTAccessTokenProfile.ack = 2;
+    global.TEST_CONFIGURATION_DEFAULTS.features = {
+      ietfJWTAccessTokenProfile: {
+        ack: 2,
+        enabled: true,
+      },
+    };
   }
-  DEFAULTS.formats.AccessToken = this.format;
-  DEFAULTS.formats.ClientCredentials = this.format;
+  global.TEST_CONFIGURATION_DEFAULTS.formats = {
+    AccessToken: this.format,
+    ClientCredentials: this.format,
+  };
 
   process.env.MOUNT_VIA = process.env.MOUNT_VIA || '';
   process.env.MOUNT_TO = process.env.MOUNT_TO || '/';
@@ -69,6 +74,7 @@ async function singleRun() {
   });
   await new Promise((resolve, reject) => {
     const mocha = new Mocha();
+    mocha.timeout(3000);
     mocha.files = files;
 
     if ('CI' in process.env) {

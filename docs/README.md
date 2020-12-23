@@ -7,7 +7,7 @@ is a good starting point to get an idea of what you should provide.
 
 ## Sponsor
 
-[<img width="65" height="65" align="left" src="https://avatars.githubusercontent.com/u/2824157?s=75&v=4" alt="auth0-logo">][sponsor-auth0] If you want to quickly add OpenID Connect authentication to Node.js apps, feel free to check out Auth0's Node.js SDK and free plan at [auth0.com/overview][sponsor-auth0].<br><br>
+[<img width="65" height="65" align="left" src="https://avatars.githubusercontent.com/u/2824157?s=75&v=4" alt="auth0-logo">][sponsor-auth0] If you want to quickly add OpenID Connect authentication to Node.js apps, feel free to check out Auth0's Node.js SDK and free plan at [auth0.com/developers][sponsor-auth0].<br><br>
 
 ## Support
 
@@ -28,6 +28,7 @@ If you or your business use oidc-provider, please consider becoming a [sponsor][
 - [Mounting oidc-provider](#mounting-oidc-provider)
   - [to a connect application](#to-a-connect-application)
   - [to a fastify application](#to-a-fastify-application)
+  - [to a nest application](#to-a-nest-application)
   - [to a hapi application](#to-a-hapi-application)
   - [to a koa application](#to-a-koa-application)
   - [to an express application](#to-an-express-application)
@@ -98,8 +99,8 @@ Since oidc-provider only comes with feature-less views and interaction handlers 
 those in, here is how oidc-provider allows you to do so:
 
 When oidc-provider cannot fulfill the authorization request for any of the possible reasons (missing
-user session, requested ACR not fulfilled, prompt requested, ...) it will resolve an the
-(configurable )`interactions.url` helper function and redirect the User-Agent to that url. Before
+user session, requested ACR not fulfilled, prompt requested, ...) it will resolve the 
+[`interactions.url`](#interactionsurl) helper function and redirect the User-Agent to that url. Before
 doing so it will save a short-lived session and dump its identifier into a cookie scoped to the
 resolved interaction path.
 
@@ -337,41 +338,45 @@ provider.use(async (ctx, next) => {
 
 ## Mounting oidc-provider
 The following snippets show how a provider instance can be mounted to existing applications with a
-path prefix.
+path prefix `/oidc`.
+
+Note: if you mount oidc-provider to a path it's likely you will have to also update the 
+[`interactions.url`](#interactionsurl) configuration to reflect the new path.
 
 ### to a `connect` application
 ```js
 // assumes connect ^3.0.0
-const prefix = '/oidc';
-connectApp.use(prefix, oidc.callback);
+connectApp.use('/oidc', oidc.callback);
 ```
 
 ### to a `fastify` application
 ```js
-// assumes fastify ^2.0.0
-const prefix = '/oidc';
-fastifyApp.use(prefix, oidc.callback);
+// assumes fastify ^3.0.0
+await app.register(require('fastify-express'));
+// or
+// await app.register(require('middie'));
+
+fastifyApp.use('/oidc', oidc.callback);
 ```
 
 ### to a `hapi` application
 ```js
-// assumes @hapi/hapi ^18.0.0
-const prefix = '/oidc';
+// assumes @hapi/hapi ^20.0.0
 const { callback } = oidc;
 hapiApp.route({
-  path: `${prefix}/{any*}`,
+  path: `/oidc/{any*}`,
   method: '*',
   config: { payload: { output: 'stream', parse: false } },
   async handler({ raw: { req, res } }, h) {
     req.originalUrl = req.url;
-    req.url = req.url.replace(prefix, '');
+    req.url = req.url.replace('/oidc', '');
 
     await new Promise((resolve) => {
       res.on('finish', resolve);
       callback(req, res);
     });
 
-    req.url = req.url.replace('/', prefix);
+    req.url = req.url.replace('/', '/oidc');
     delete req.originalUrl;
 
     return res.finished ? h.abandon : h.continue;
@@ -379,11 +384,26 @@ hapiApp.route({
 });
 ```
 
+### to a `nest` application
+```ts
+// assumes NestJS ^7.0.0
+import { Controller, All, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
+const { callback } = oidc;
+@Controller('oidc')
+export class OidcController {
+  @All('/*')
+  public mountedOidc(@Req() req: Request, @Res() res: Response): void {
+    req.url = req.originalUrl.replace('/oidc', '');
+    return callback(req, res);
+  }
+}
+```
+
 ### to an `express` application
 ```js
 // assumes express ^4.0.0
-const prefix = '/oidc';
-expressApp.use(prefix, oidc.callback);
+expressApp.use('/oidc', oidc.callback);
 ```
 
 ### to a `koa` application
@@ -391,8 +411,7 @@ expressApp.use(prefix, oidc.callback);
 // assumes koa ^2.0.0
 // assumes koa-mount ^4.0.0
 const mount = require('koa-mount');
-const prefix = '/oidc';
-koaApp.use(mount(prefix, oidc.app));
+koaApp.use(mount('/oidc', oidc.app));
 ```
 
 Note: when the issuer identifier does not include the path prefix you should take care of rewriting
@@ -420,6 +439,7 @@ application code
 | oidc-provider mounted to a `koa` application | `yourKoaApp.proxy = true` |
 | oidc-provider mounted to a `fastify` application | `provider.proxy = true` |
 | oidc-provider mounted to a `hapi` application | `provider.proxy = true` |
+| oidc-provider mounted to a `nest` application | `provider.proxy = true` |
 
 It is also necessary that the web server doing the offloading also passes
 those headers to the downstream application. Here is a common configuration
@@ -470,7 +490,6 @@ location / {
   - [requestObjects](#featuresrequestobjects)
   - [resourceIndicators](#featuresresourceindicators)
   - [revocation](#featuresrevocation)
-  - [secp256k1](#featuressecp256k1)
   - [sessionManagement](#featuressessionmanagement)
   - [userinfo](#featuresuserinfo)
   - [webMessageResponseMode](#featureswebmessageresponsemode)
@@ -492,10 +511,8 @@ location / {
 - [httpOptions](#httpoptions)
 - [interactions ❗](#interactions)
 - [issueRefreshToken](#issuerefreshtoken)
-- [logoutSource](#logoutsource)
 - [pairwiseIdentifier](#pairwiseidentifier)
 - [pkce](#pkce)
-- [postLogoutSuccessSource](#postlogoutsuccesssource)
 - [renderError](#rendererror)
 - [responseTypes](#responsetypes)
 - [rotateRefreshToken](#rotaterefreshtoken)
@@ -598,7 +615,7 @@ JSON Web Key Set used by the provider for signing and encryption. The object mus
    
  Supported key types are:   
  - RSA
- - OKP (Ed25519 and Ed448 curves)
+ - OKP (Ed25519, Ed448, X25519, X448 sub types)
  - EC (P-256, secp256k1, P-384, and P-521 curves)   
   
 
@@ -612,6 +629,7 @@ _**recommendation**_: **Provider key rotation** - The following action order is 
 </summary><br>
 
 ```js
+// npm install jose@2
 const { JWKS: { KeyStore } } = require('jose');
 const keystore = new KeyStore();
 keystore.generateSync('RSA', 2048, { alg: 'RS256', use: 'sig' });
@@ -625,6 +643,7 @@ Re-using the same keys for both encryption and signing is discouraged so it is b
   
 
 ```js
+// npm install jose@2
 const { JWKS: { KeyStore } } = require('jose');
 const keystore = new KeyStore();
 Promise.all([
@@ -687,7 +706,7 @@ new Provider('http://localhost:3000', {
 
 ### features.backchannelLogout
 
-[Back-Channel Logout 1.0 - draft 04](https://openid.net/specs/openid-connect-backchannel-1_0-04.html)  
+[Back-Channel Logout 1.0 - draft 06](https://openid.net/specs/openid-connect-backchannel-1_0-06.html)  
 
 Enables Back-Channel Logout features.   
   
@@ -981,7 +1000,7 @@ _**default value**_:
 
 ### features.frontchannelLogout
 
-[Front-Channel Logout 1.0 - draft 02](https://openid.net/specs/openid-connect-frontchannel-1_0-02.html)  
+[Front-Channel Logout 1.0 - draft 04](https://openid.net/specs/openid-connect-frontchannel-1_0-04.html)  
 
 Enables Front-Channel Logout features   
  Note: Browsers blocking access to cookies from a third party context hinder the reliability of this standard.  
@@ -1066,7 +1085,7 @@ Enables Token Introspection features
 _**default value**_:
 ```js
 {
-  allowedPolicy: [AsyncFunction: allowedPolicy], // see expanded details below
+  allowedPolicy: [AsyncFunction: introspectionAllowedPolicy], // see expanded details below
   enabled: false
 }
 ```
@@ -1081,7 +1100,7 @@ Helper function used to determine whether the client/RS (client argument) is all
 
 _**default value**_:
 ```js
-async function allowedPolicy(ctx, client, token) {
+async function introspectionAllowedPolicy(ctx, client, token) {
   if (client.introspectionEndpointAuthMethod === 'none' && token.clientId !== ctx.oidc.client.clientId) {
     return false;
   }
@@ -1273,7 +1292,7 @@ false
 
 ### features.pushedAuthorizationRequests
 
-[draft-ietf-oauth-par-01](https://tools.ietf.org/html/draft-ietf-oauth-par-01) - OAuth 2.0 Pushed Authorization Requests  
+[draft-ietf-oauth-par-03](https://tools.ietf.org/html/draft-ietf-oauth-par-03) - OAuth 2.0 Pushed Authorization Requests  
 
 Enables the use of `pushed_authorization_request_endpoint` defined by the Pushed Authorization Requests draft.   
   
@@ -1282,9 +1301,25 @@ Enables the use of `pushed_authorization_request_endpoint` defined by the Pushed
 _**default value**_:
 ```js
 {
-  enabled: false
+  enabled: false,
+  requirePushedAuthorizationRequests: false
 }
 ```
+
+<details><summary>(Click to expand) features.pushedAuthorizationRequests options details</summary><br>
+
+
+#### requirePushedAuthorizationRequests
+
+Makes the use of PAR required for all authorization requests as an OP policy.  
+
+
+_**default value**_:
+```js
+false
+```
+
+</details>
 
 ### features.registration
 
@@ -1399,6 +1434,7 @@ Support modules:
   
 
 ```js
+// npm install jose@2
 const { JWT: { verify }, JWK } = require('jose');
 const {
   errors: { InvalidSoftwareStatement, UnapprovedSoftwareStatement, InvalidClientMetadata },
@@ -1514,7 +1550,7 @@ false
 
 ### features.requestObjects
 
-[Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html#RequestObject) and [JWT Secured Authorization Request (JAR)](https://tools.ietf.org/html/draft-ietf-oauth-jwsreq-19) - Request Object  
+[Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html#RequestObject) and [JWT Secured Authorization Request (JAR)](https://tools.ietf.org/html/draft-ietf-oauth-jwsreq-26) - Request Object  
 
 Enables the use and validations of the `request` and/or `request_uri` parameters.  
 
@@ -1532,6 +1568,7 @@ _**default value**_:
   },
   request: false,
   requestUri: true,
+  requireSignedRequestObject: false,
   requireUriRegistration: true
 }
 ```
@@ -1589,6 +1626,16 @@ _**default value**_:
 true
 ```
 
+#### requireSignedRequestObject
+
+Makes the use of signed request objects required for all authorization requests as an OP policy.  
+
+
+_**default value**_:
+```js
+false
+```
+
 #### requireUriRegistration
 
 Makes request_uri pre-registration mandatory (true) or optional (false).  
@@ -1612,7 +1659,7 @@ Enables the use of `resource` parameter for the authorization and token endpoint
 _**default value**_:
 ```js
 {
-  allowedPolicy: [AsyncFunction: allowedPolicy], // see expanded details below
+  allowedPolicy: [AsyncFunction: resourceIndicatorsAllowedPolicy], // see expanded details below
   enabled: false
 }
 ```
@@ -1677,7 +1724,7 @@ _**recommendation**_: Only allow pre-registered resource values, to pre-register
 
 _**default value**_:
 ```js
-async function allowedPolicy(ctx, resources, client) {
+async function resourceIndicatorsAllowedPolicy(ctx, resources, client) {
   return true;
 }
 ```
@@ -1699,23 +1746,86 @@ _**default value**_:
 }
 ```
 
-### features.secp256k1
+### features.rpInitiatedLogout
 
-[html/draft-ietf-cose-webauthn-algorithms-05](https://tools.ietf.org/html/html/draft-ietf-cose-webauthn-algorithms-05) - Support for secp256k1 EC curve  
+[RP-Initiated Logout 1.0](https://openid.net/specs/openid-connect-rpinitiated-1_0-01.html)  
 
-Enables the use of ES256K algorithm in `whitelistedJWA` configuration as well as having an EC JWK with secp256k1 curve in the provider keystore.  
+Enables RP-Initiated Logout features  
 
 
 _**default value**_:
 ```js
 {
-  enabled: false
+  enabled: true,
+  logoutSource: [AsyncFunction: logoutSource], // see expanded details below
+  postLogoutSuccessSource: [AsyncFunction: postLogoutSuccessSource] // see expanded details below
 }
 ```
 
+<details><summary>(Click to expand) features.rpInitiatedLogout options details</summary><br>
+
+
+#### logoutSource
+
+HTML source rendered when session management feature renders a confirmation prompt for the User-Agent.  
+
+
+_**default value**_:
+```js
+async function logoutSource(ctx, form) {
+  // @param ctx - koa request context
+  // @param form - form source (id="op.logoutForm") to be embedded in the page and submitted by
+  //   the End-User
+  ctx.body = `<!DOCTYPE html>
+    <head>
+      <title>Logout Request</title>
+      <style>/* css and html classes omitted for brevity, see lib/helpers/defaults.js */</style>
+    </head>
+    <body>
+      <div>
+        <h1>Do you want to sign-out from ${ctx.host}?</h1>
+        ${form}
+        <button autofocus type="submit" form="op.logoutForm" value="yes" name="logout">Yes, sign me out</button>
+        <button type="submit" form="op.logoutForm">No, stay signed in</button>
+      </div>
+    </body>
+    </html>`;
+}
+```
+
+#### postLogoutSuccessSource
+
+HTML source rendered when session management feature concludes a logout but there was no `post_logout_redirect_uri` provided by the client.  
+
+
+_**default value**_:
+```js
+async function postLogoutSuccessSource(ctx) {
+  // @param ctx - koa request context
+  const {
+    clientId, clientName, clientUri, initiateLoginUri, logoUri, policyUri, tosUri,
+  } = ctx.oidc.client || {}; // client is defined if the user chose to stay logged in with the OP
+  const display = clientName || clientId;
+  ctx.body = `<!DOCTYPE html>
+    <head>
+      <title>Sign-out Success</title>
+      <style>/* css and html classes omitted for brevity, see lib/helpers/defaults.js */</style>
+    </head>
+    <body>
+      <div>
+        <h1>Sign-out Success</h1>
+        <p>Your sign-out ${display ? `with ${display}` : ''} was successful.</p>
+      </div>
+    </body>
+    </html>`;
+}
+```
+
+</details>
+
 ### features.sessionManagement
 
-[Session Management 1.0 - draft 28](https://openid.net/specs/openid-connect-session-1_0-28.html)  
+[Session Management 1.0 - draft 30](https://openid.net/specs/openid-connect-session-1_0-30.html)  
 
 Enables Session Management features.   
  Note: Browsers blocking access to cookies from a third party context hinder the reliability of this standard.  
@@ -1726,7 +1836,7 @@ _**default value**_:
 {
   enabled: false,
   keepHeaders: false,
-  scriptNonce: [Function: scriptNonce] // see expanded details below
+  scriptNonce: [Function: sessionManagementScriptNonce] // see expanded details below
 }
 ```
 
@@ -1752,7 +1862,7 @@ When using `nonce-{random}` CSP policy use this helper function to resolve a non
 
 _**default value**_:
 ```js
-function scriptNonce(ctx) {
+function sessionManagementScriptNonce(ctx) {
   return undefined;
 }
 ```
@@ -1786,7 +1896,7 @@ _**default value**_:
 ```js
 {
   enabled: false,
-  scriptNonce: [Function: scriptNonce] // see expanded details below
+  scriptNonce: [Function: webMessageResponseModeScriptNonce] // see expanded details below
 }
 ```
 
@@ -1800,7 +1910,7 @@ When using `nonce-{random}` CSP policy use this helper function to resolve a non
 
 _**default value**_:
 ```js
-function scriptNonce(ctx) {
+function webMessageResponseModeScriptNonce(ctx) {
   return undefined;
 }
 ```
@@ -1851,7 +1961,11 @@ async function audiences(ctx, sub, token, use) {
 
 ### claims
 
-Array of the Claim Names of the Claims that the OpenID Provider MAY be able to supply values for.  
+Describes the claims that the OpenID Provider MAY be able to supply values for.   
+ It is used to achieve two different things related to claims:
+ - which additional claims are available to RPs (configure as `{ claimName: null }`)
+ - which claims fall under what scope (configure `{ scopeName: ['claim', 'another-claim'] }`)   
+  
 
 
 _**default value**_:
@@ -1866,6 +1980,13 @@ _**default value**_:
   sid: null
 }
 ```
+<a id="claims-open-id-connect-1-0-standard-claims"></a><details><summary>(Click to expand) OpenID Connect 1.0 Standard Claims</summary><br>
+
+
+See [/recipes/claim_configuration.md](/recipes/claim_configuration.md)  
+
+
+</details>
 
 ### clientBasedCORS
 
@@ -2120,7 +2241,7 @@ validator function that will be executed in order once for every property define
 
 _**default value**_:
 ```js
-function validator(key, value, metadata, ctx) {
+function extraClientMetadataValidator(key, value, metadata, ctx) {
   // @param key - the client metadata property name
   // @param value - the property value
   // @param metadata - the current accumulated client metadata
@@ -2136,6 +2257,7 @@ function validator(key, value, metadata, ctx) {
 </summary><br>
 
 ```js
+// npm install jose@2
 const { JWT: { verify }, JWK } = require('jose');
 const {
   errors: { InvalidSoftwareStatement, UnapprovedSoftwareStatement },
@@ -2724,7 +2846,7 @@ Function used to determine where to redirect User-Agent for necessary interactio
 
 _**default value**_:
 ```js
-async function url(ctx, interaction) {
+async function interactionsUrl(ctx, interaction) {
   return `/interaction/${ctx.oidc.uid}`;
 }
 ```
@@ -2773,34 +2895,6 @@ async issueRefreshToken(ctx, client, code) {
 ```
 </details>
 
-### logoutSource
-
-HTML source rendered when session management feature renders a confirmation prompt for the User-Agent.  
-
-
-_**default value**_:
-```js
-async function logoutSource(ctx, form) {
-  // @param ctx - koa request context
-  // @param form - form source (id="op.logoutForm") to be embedded in the page and submitted by
-  //   the End-User
-  ctx.body = `<!DOCTYPE html>
-    <head>
-      <title>Logout Request</title>
-      <style>/* css and html classes omitted for brevity, see lib/helpers/defaults.js */</style>
-    </head>
-    <body>
-      <div>
-        <h1>Do you want to sign-out from ${ctx.host}?</h1>
-        ${form}
-        <button autofocus type="submit" form="op.logoutForm" value="yes" name="logout">Yes, sign me out</button>
-        <button type="submit" form="op.logoutForm">No, stay signed in</button>
-      </div>
-    </body>
-    </html>`;
-}
-```
-
 ### pairwiseIdentifier
 
 Function used by the OP when resolving pairwise ID Token and Userinfo sub claim values. See [Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html#PairwiseAlg)  
@@ -2847,36 +2941,8 @@ Configures if and when the OP requires clients to use PKCE. This helper is calle
 
 _**default value**_:
 ```js
-function required(ctx, client) {
+function pkceRequired(ctx, client) {
   return client.applicationType === 'native';
-}
-```
-
-### postLogoutSuccessSource
-
-HTML source rendered when session management feature concludes a logout but there was no `post_logout_redirect_uri` provided by the client.  
-
-
-_**default value**_:
-```js
-async function postLogoutSuccessSource(ctx) {
-  // @param ctx - koa request context
-  const {
-    clientId, clientName, clientUri, initiateLoginUri, logoUri, policyUri, tosUri,
-  } = ctx.oidc.client || {}; // client is defined if the user chose to stay logged in with the OP
-  const display = clientName || clientId;
-  ctx.body = `<!DOCTYPE html>
-    <head>
-      <title>Sign-out Success</title>
-      <style>/* css and html classes omitted for brevity, see lib/helpers/defaults.js */</style>
-    </head>
-    <body>
-      <div>
-        <h1>Sign-out Success</h1>
-        <p>Your sign-out ${display ? `with ${display}` : ''} was successful.</p>
-      </div>
-    </body>
-    </html>`;
 }
 ```
 
@@ -3076,7 +3142,7 @@ _**default value**_:
   ClientCredentials: 600,
   DeviceCode: 600,
   IdToken: 3600,
-  RefreshToken: function RefreshToken(ctx, token, client) {
+  RefreshToken: function RefreshTokenTTL(ctx, token, client) {
     if (
       ctx && ctx.oidc.entities.RotatedRefreshToken
       && client.applicationType === 'web'
@@ -3760,7 +3826,7 @@ listeners for errors
 deliver them to client developers out-of-band, e.g. by logs in an admin interface.
 
 ```js
-function handleClientAuthErrors(err, { headers: { authorization }, oidc: { body, client } }) {
+function handleClientAuthErrors({ headers: { authorization }, oidc: { body, client } }, err) {
   if (err.statusCode === 401 && err.message === 'invalid_client') {
     // console.log(err);
     // save error details out-of-bands for the client developers, `authorization`, `body`, `client`
@@ -3827,4 +3893,4 @@ because they are required properties, but they can be empty...
 
 
 [support-sponsor]: https://github.com/sponsors/panva
-[sponsor-auth0]: https://auth0.com/overview?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=oidc-provider&utm_content=auth
+[sponsor-auth0]: https://auth0.com/developers?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=oidc-provider&utm_content=auth

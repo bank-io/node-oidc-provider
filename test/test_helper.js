@@ -17,7 +17,7 @@ const KeyGrip = require('keygrip'); // eslint-disable-line import/no-extraneous-
 const Connect = require('connect');
 const Express = require('express');
 const Fastify = require('fastify');
-const Hapi = require('@hapi/hapi');
+const middie = require('middie');
 const Koa = require('koa');
 
 const nanoid = require('../lib/helpers/nanoid');
@@ -254,7 +254,6 @@ module.exports = function testHelper(dir, {
         absolute = all;
       }
 
-
       return (response) => {
         const { query } = parse(response.headers.location, true);
         if (absolute) {
@@ -415,6 +414,7 @@ module.exports = function testHelper(dir, {
       }
       case 'fastify': {
         const app = new Fastify();
+        await app.register(middie);
         app.use(mountTo, provider.callback);
         await new Promise((resolve) => global.server.close(resolve));
         await app.listen(port);
@@ -427,6 +427,7 @@ module.exports = function testHelper(dir, {
         break;
       }
       case 'hapi': {
+        const Hapi = require('@hapi/hapi'); // eslint-disable-line global-require
         const app = new Hapi.Server({ port });
         const { callback } = provider;
         app.route({

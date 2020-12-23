@@ -43,13 +43,13 @@ The following draft specifications are implemented by oidc-provider.
 - [JWT Secured Authorization Response Mode for OAuth 2.0 (JARM) - draft 02][jarm]
 - [OAuth 2.0 Demonstration of Proof-of-Possession at the Application Layer (DPoP) - draft 01][dpop]
 - [OAuth 2.0 JWT Secured Authorization Request (JAR)][jar]
-- [OAuth 2.0 Pushed Authorization Requests - draft 01][par]
+- [OAuth 2.0 Pushed Authorization Requests - draft 03][par]
 - [OAuth 2.0 Resource Indicators - draft 08][resource-indicators]
 - [OAuth 2.0 Web Message Response Mode - individual draft 00][wmrm]
-- [OpenID Connect Back-Channel Logout 1.0 - draft 04][backchannel-logout]
-- [OpenID Connect Front-Channel Logout 1.0 - draft 02][frontchannel-logout]
-- [OpenID Connect Session Management 1.0 - draft 28][session-management]
-- [JWS ES256K / JWK secp256k1 JOSE support - draft 05][secp256k1]
+- [OpenID Connect RP-Initiated Logout 1.0 - draft 01][rpinitiated-logout]
+- [OpenID Connect Back-Channel Logout 1.0 - draft 06][backchannel-logout]
+- [OpenID Connect Front-Channel Logout 1.0 - draft 04][frontchannel-logout]
+- [OpenID Connect Session Management 1.0 - draft 30][session-management]
 
 Updates to draft specification versions are released as MINOR library versions,
 if you utilize these specification implementations consider using the tilde `~` operator in your
@@ -62,13 +62,13 @@ your CI.
 Filip Skokan has [certified][openid-certified-link] that [oidc-provider][npm-url]
 conforms to the following profiles of the OpenID Connect™ protocol
 
-- OP [Basic](https://openid.net/wordpress-content/uploads/2017/01/FilipSkokan_oidc-provider_OP-Basic-02-Jan-2017.zip), [Implicit](https://openid.net/wordpress-content/uploads/2017/01/FilipSkokan_oidc-provider_OP-Implicit-02-Jan-2017.zip), [Hybrid](https://openid.net/wordpress-content/uploads/2017/01/FilipSkokan_oidc-provider_OP-Hybrid-02-Jan-2017.zip), [Config](https://openid.net/wordpress-content/uploads/2017/01/FilipSkokan_oidc-provider_OP-Config-02-Jan-2017.zip), [Dynamic](https://openid.net/wordpress-content/uploads/2017/01/FilipSkokan_oidc-provider_OP-Dynamic-02-Jan-2017.zip), [Form Post](https://openid.net/wordpress-content/uploads/2018/06/FilipSkokan_oidc-provider_OP-FormPost-25-Jun-2018.zip), and [3rd Party-Init](https://openid.net/wordpress-content/uploads/2019/10/FilipSkokan_oidc-provider_OP-3rd-party-23-Sep-2019.zip)
-- OP [Front-Channel Logout](https://openid.net/wordpress-content/uploads/2019/11/FilipSkokan_oidc-provider_OP-Front-Channel-Logout_11-Nov-2019.zip), [Back-Channel Logout](https://openid.net/wordpress-content/uploads/2019/11/FilipSkokan_oidc-provider_OP-Back-Channel-Logout_11-Nov-2019.zip), [RP-Initiated Logout](https://openid.net/wordpress-content/uploads/2019/11/FilipSkokan_oidc-provider_OP-RP-Initiated-Logout_11-Nov-2019.zip), and [Session Management](https://openid.net/wordpress-content/uploads/2019/11/FilipSkokan_oidc-provider_OP-Session-Management_11-Nov-2019.zip)
-- OP FAPI R/W [MTLS](https://openid.net/wordpress-content/uploads/2019/08/FilipSkokan_oidc-provider_OP-FAPI-RW-mtls-20-Aug-2019.zip) and [Private Key](https://openid.net/wordpress-content/uploads/2019/08/FilipSkokan_oidc-provider_OP-FAPI-RW-private_key_jwt-20-Aug-2019.zip)
+- OP Basic, Implicit, Hybrid, Config, Dynamic, Form Post, and 3rd Party-Init
+- OP Front-Channel Logout, Back-Channel Logout, RP-Initiated Logout, and Session Management
+- OP FAPI R/W MTLS and Private Key
 
 ## Sponsor
 
-[<img width="65" height="65" align="left" src="https://avatars.githubusercontent.com/u/2824157?s=75&v=4" alt="auth0-logo">][sponsor-auth0] If you want to quickly add OpenID Connect authentication to Node.js apps, feel free to check out Auth0's Node.js SDK and free plan at [auth0.com/overview][sponsor-auth0].<br><br>
+[<img width="65" height="65" align="left" src="https://avatars.githubusercontent.com/u/2824157?s=75&v=4" alt="auth0-logo">][sponsor-auth0] If you want to quickly add OpenID Connect authentication to Node.js apps, feel free to check out Auth0's Node.js SDK and free plan at [auth0.com/developers][sponsor-auth0].<br><br>
 
 ## Support
 
@@ -147,7 +147,7 @@ See the list of available emitted [event names](/docs/events.md) and their descr
 [discovery]: https://openid.net/specs/openid-connect-discovery-1_0.html
 [oauth2-registration]: https://tools.ietf.org/html/rfc7591
 [registration]: https://openid.net/specs/openid-connect-registration-1_0.html
-[session-management]: https://openid.net/specs/openid-connect-session-1_0-28.html
+[session-management]: https://openid.net/specs/openid-connect-session-1_0-30.html
 [form-post]: https://openid.net/specs/oauth-v2-form-post-response-mode-1_0.html
 [oauth2]: https://tools.ietf.org/html/rfc6749
 [oauth2-bearer]: https://tools.ietf.org/html/rfc6750
@@ -158,21 +158,21 @@ See the list of available emitted [event names](/docs/events.md) and their descr
 [heroku-example]: https://op.panva.cz/.well-known/openid-configuration
 [heroku-example-client]: https://tranquil-reef-95185.herokuapp.com/client
 [openid-client]: https://github.com/panva/node-openid-client
-[backchannel-logout]: https://openid.net/specs/openid-connect-backchannel-1_0-04.html
-[frontchannel-logout]: https://openid.net/specs/openid-connect-frontchannel-1_0-02.html
+[backchannel-logout]: https://openid.net/specs/openid-connect-backchannel-1_0-06.html
+[frontchannel-logout]: https://openid.net/specs/openid-connect-frontchannel-1_0-04.html
 [registration-management]: https://tools.ietf.org/html/rfc7592
 [oauth-native-apps]: https://tools.ietf.org/html/rfc8252
 [debug-link]: https://github.com/visionmedia/debug
 [wmrm]: https://tools.ietf.org/html/draft-sakimura-oauth-wmrm-00
-[jar]: https://tools.ietf.org/html/draft-ietf-oauth-jwsreq-19
+[jar]: https://tools.ietf.org/html/draft-ietf-oauth-jwsreq-26
 [device-flow]: https://tools.ietf.org/html/rfc8628
 [jwt-introspection]: https://tools.ietf.org/html/draft-ietf-oauth-jwt-introspection-response-09
-[sponsor-auth0]: https://auth0.com/overview?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=oidc-provider&utm_content=auth
+[sponsor-auth0]: https://auth0.com/developers?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=oidc-provider&utm_content=auth
 [mtls]: https://tools.ietf.org/html/rfc8705
 [dpop]: https://tools.ietf.org/html/draft-ietf-oauth-dpop-01
 [resource-indicators]: https://tools.ietf.org/html/draft-ietf-oauth-resource-indicators-08
 [jarm]: https://openid.net/specs/openid-financial-api-jarm-wd-02.html
 [jwt-at]: https://tools.ietf.org/html/draft-ietf-oauth-access-token-jwt-05
 [support-sponsor]: https://github.com/sponsors/panva
-[par]: https://tools.ietf.org/html/draft-ietf-oauth-par-01
-[secp256k1]: https://tools.ietf.org/html/draft-ietf-cose-webauthn-algorithms-05
+[par]: https://tools.ietf.org/html/draft-ietf-oauth-par-03
+[rpinitiated-logout]: https://openid.net/specs/openid-connect-rpinitiated-1_0-01.html

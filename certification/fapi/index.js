@@ -1,5 +1,6 @@
 const { readFileSync } = require('fs');
 const path = require('path');
+const { randomBytes } = require('crypto');
 const https = require('https');
 
 const jose = require('jose');
@@ -67,10 +68,14 @@ const fapi = new Provider(ISSUER, {
       response_types: ['code', 'code id_token'],
       grant_types: ['implicit', 'authorization_code', 'refresh_token'],
       redirect_uris: [
-        `${SUITE_BASE_URL}/test/a/oidc-provider-pkjwt/callback`,
-        'https://staging.certification.openid.net/test/a/oidc-provider-pkjwt/callback',
-        `${SUITE_BASE_URL}/test/a/oidc-provider-pkjwt/callback?dummy1=lorem&dummy2=ipsum`,
-        'https://staging.certification.openid.net/test/a/oidc-provider-pkjwt/callback?dummy1=lorem&dummy2=ipsum',
+        `${SUITE_BASE_URL}/test/a/oidc-provider-private_key_jwt-plain_fapi-jarm/callback`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider-private_key_jwt-plain_fapi-plain_response/callback`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider/callback`,
+        'https://review-app-dev-branch-8.certification.openid.net/test/a/mtls/callback', // removeme eventually
+        'https://review-app-dev-branch-8.certification.openid.net/test/a/mtls/callback?dummy1=lorem&dummy2=ipsum', // removeme eventually
+        `${SUITE_BASE_URL}/test/a/oidc-provider-private_key_jwt-plain_fapi-jarm/callback?dummy1=lorem&dummy2=ipsum`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider-private_key_jwt-plain_fapi-plain_response/callback?dummy1=lorem&dummy2=ipsum`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider/callback?dummy1=lorem&dummy2=ipsum`,
       ],
       token_endpoint_auth_method: 'private_key_jwt',
       jwks: {
@@ -82,10 +87,14 @@ const fapi = new Provider(ISSUER, {
       response_types: ['code', 'code id_token'],
       grant_types: ['implicit', 'authorization_code', 'refresh_token'],
       redirect_uris: [
-        `${SUITE_BASE_URL}/test/a/oidc-provider-pkjwt/callback`,
-        'https://staging.certification.openid.net/test/a/oidc-provider-pkjwt/callback',
-        `${SUITE_BASE_URL}/test/a/oidc-provider-pkjwt/callback?dummy1=lorem&dummy2=ipsum`,
-        'https://staging.certification.openid.net/test/a/oidc-provider-pkjwt/callback?dummy1=lorem&dummy2=ipsum',
+        `${SUITE_BASE_URL}/test/a/oidc-provider-private_key_jwt-plain_fapi-jarm/callback`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider-private_key_jwt-plain_fapi-plain_response/callback`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider/callback`,
+        'https://review-app-dev-branch-8.certification.openid.net/test/a/mtls/callback', // removeme eventually
+        'https://review-app-dev-branch-8.certification.openid.net/test/a/mtls/callback?dummy1=lorem&dummy2=ipsum', // removeme eventually
+        `${SUITE_BASE_URL}/test/a/oidc-provider-private_key_jwt-plain_fapi-jarm/callback?dummy1=lorem&dummy2=ipsum`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider-private_key_jwt-plain_fapi-plain_response/callback?dummy1=lorem&dummy2=ipsum`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider/callback?dummy1=lorem&dummy2=ipsum`,
       ],
       token_endpoint_auth_method: 'private_key_jwt',
       jwks: {
@@ -97,10 +106,14 @@ const fapi = new Provider(ISSUER, {
       response_types: ['code', 'code id_token'],
       grant_types: ['implicit', 'authorization_code', 'refresh_token'],
       redirect_uris: [
-        `${SUITE_BASE_URL}/test/a/oidc-provider-mtls/callback`,
-        'https://staging.certification.openid.net/test/a/oidc-provider-mtls/callback',
-        `${SUITE_BASE_URL}/test/a/oidc-provider-mtls/callback?dummy1=lorem&dummy2=ipsum`,
-        'https://staging.certification.openid.net/test/a/oidc-provider-mtls/callback?dummy1=lorem&dummy2=ipsum',
+        `${SUITE_BASE_URL}/test/a/oidc-provider-mtls-plain_fapi-jarm/callback`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider-mtls-plain_fapi-plain_response/callback`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider/callback`,
+        'https://review-app-dev-branch-8.certification.openid.net/test/a/mtls/callback', // removeme eventually
+        'https://review-app-dev-branch-8.certification.openid.net/test/a/mtls/callback?dummy1=lorem&dummy2=ipsum', // removeme eventually
+        `${SUITE_BASE_URL}/test/a/oidc-provider-mtls-plain_fapi-jarm/callback?dummy1=lorem&dummy2=ipsum`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider-mtls-plain_fapi-plain_response/callback?dummy1=lorem&dummy2=ipsum`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider/callback?dummy1=lorem&dummy2=ipsum`,
       ],
       token_endpoint_auth_method: 'self_signed_tls_client_auth',
       jwks: {
@@ -112,10 +125,14 @@ const fapi = new Provider(ISSUER, {
       response_types: ['code', 'code id_token'],
       grant_types: ['implicit', 'authorization_code', 'refresh_token'],
       redirect_uris: [
-        `${SUITE_BASE_URL}/test/a/oidc-provider-mtls/callback`,
-        'https://staging.certification.openid.net/test/a/oidc-provider-mtls/callback',
-        `${SUITE_BASE_URL}/test/a/oidc-provider-mtls/callback?dummy1=lorem&dummy2=ipsum`,
-        'https://staging.certification.openid.net/test/a/oidc-provider-mtls/callback?dummy1=lorem&dummy2=ipsum',
+        `${SUITE_BASE_URL}/test/a/oidc-provider-mtls-plain_fapi-jarm/callback`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider-mtls-plain_fapi-plain_response/callback`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider/callback`,
+        'https://review-app-dev-branch-8.certification.openid.net/test/a/mtls/callback', // removeme eventually
+        'https://review-app-dev-branch-8.certification.openid.net/test/a/mtls/callback?dummy1=lorem&dummy2=ipsum', // removeme eventually
+        `${SUITE_BASE_URL}/test/a/oidc-provider-mtls-plain_fapi-jarm/callback?dummy1=lorem&dummy2=ipsum`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider-mtls-plain_fapi-plain_response/callback?dummy1=lorem&dummy2=ipsum`,
+        `${SUITE_BASE_URL}/test/a/oidc-provider/callback?dummy1=lorem&dummy2=ipsum`,
       ],
       token_endpoint_auth_method: 'self_signed_tls_client_auth',
       jwks: {
@@ -189,7 +206,15 @@ fapi.interactionResult = function patchedInteractionResult(...args) {
   return orig.call(this, ...args);
 };
 
+function uuid(e){return e?(e^randomBytes(1)[0]%16>>e/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,uuid)} // eslint-disable-line
+
 fapi.use(helmet());
+fapi.use((ctx, next) => {
+  if (!('x-fapi-interaction-id' in ctx.headers)) {
+    ctx.headers['x-fapi-interaction-id'] = uuid();
+  }
+  return next();
+});
 
 if (process.env.NODE_ENV === 'production') {
   fapi.proxy = true;

@@ -5,7 +5,6 @@ import * as events from 'events';
 import * as http from 'http';
 import * as http2 from 'http2';
 import * as https from 'https';
-import * as net from 'net';
 import * as tls from 'tls';
 
 import * as jose from 'jose';
@@ -15,7 +14,7 @@ export {};
 
 export type CanBePromise<T> = Promise<T> | T;
 export type RetryFunction = (retry: number, error: Error) => number;
-export type FindAccount = (ctx: KoaContextWithOIDC, sub: string, token?: AuthorizationCode | AccessToken | DeviceCode) => CanBePromise<Account>;
+export type FindAccount = (ctx: KoaContextWithOIDC, sub: string, token?: AuthorizationCode | AccessToken | DeviceCode) => CanBePromise<Account | undefined>;
 export type TokenFormat = 'opaque' | 'jwt' | 'jwt-ietf' | 'paseto';
 
 export type AccessTokenFormatFunction = (ctx: KoaContextWithOIDC, token: AccessToken) => TokenFormat;
@@ -124,6 +123,9 @@ export interface AnyClientMetadata {
   web_message_uris?: string[];
   tls_client_certificate_bound_access_tokens?: boolean;
 
+  require_signed_request_object?: boolean;
+  require_pushed_authorization_requests?: boolean;
+
   [key: string]: any;
 }
 
@@ -188,7 +190,7 @@ declare class Interaction extends BaseModel {
   };
   params: AnyObject;
   prompt: PromptDetail;
-  result: InteractionResults;
+  result?: InteractionResults;
   returnTo: string;
   signed?: string[];
   uid: string;
@@ -552,7 +554,7 @@ declare class IdToken {
   set(key: string, value: any): void;
   payload(): Promise<AnyObject>;
   issue(context?: { use: 'idtoken' | 'logout' | 'userinfo' | 'introspection' | 'authorization', expiresAt?: number }): Promise<string>;
-  validate(idToken: string, client: Client): Promise<{ header: AnyObject, payload: AnyObject }>;
+  static validate(idToken: string, client: Client): Promise<{ header: AnyObject, payload: AnyObject }>;
 }
 
 declare class ClientKeystore {
@@ -740,7 +742,7 @@ export interface ErrorOut {
   state?: string;
 }
 
-export interface AdapterPayload {
+export interface AdapterPayload extends AnyClientMetadata {
   account?: string;
   accountId?: string;
   acr?: string;
@@ -812,6 +814,8 @@ export interface Adapter {
   revokeByGrantId(grantId: string): Promise<undefined | void>;
 }
 
+export type AdapterFactory = (name: string) => Adapter;
+
 export interface AdapterConstructor {
   new(name: string): Adapter;
 }
@@ -830,7 +834,7 @@ export interface CookiesSetOptions {
 export interface Configuration {
   acrValues?: string[] | Set<string>;
 
-  adapter?: AdapterConstructor;
+  adapter?: AdapterConstructor | AdapterFactory;
 
   claims?: {
     [key: string]: null | string[]
@@ -925,6 +929,7 @@ export interface Configuration {
       request?: boolean;
       requestUri?: boolean;
       requireUriRegistration?: boolean;
+      requireSignedRequestObject?: boolean;
       mergingStrategy?: {
         name?: 'lax' | 'strict' | 'whitelist',
         whitelist?: string[] | Set<string>;
@@ -937,21 +942,16 @@ export interface Configuration {
       ack?: 'draft-01'
     },
 
-    secp256k1?: {
-      enabled?: boolean,
-      ack?: 'draft-03' | 'draft-04' | 'draft-05'
-    },
-
     sessionManagement?: {
       enabled?: boolean,
       keepHeaders?: boolean,
-      ack?: 28 | 'draft-28',
+      ack?: 28 | 'draft-28' | 'draft-29' | 'draft-30',
       scriptNonce?: (ctx: KoaContextWithOIDC) => string
     },
 
     backchannelLogout?: {
       enabled?: boolean,
-      ack?: 4 | 'draft-04'
+      ack?: 4 | 'draft-04' | 'draft-05' | 'draft-06'
     },
 
     ietfJWTAccessTokenProfile?: {
@@ -981,8 +981,15 @@ export interface Configuration {
     },
 
     pushedAuthorizationRequests?: {
+      requirePushedAuthorizationRequests?: boolean;
       enabled?: boolean,
-      ack?: 0 | 'individual-draft-01' | 'draft-00' | 'draft-01'
+      ack?: 'draft-02' | 'draft-03'
+    },
+
+    rpInitiatedLogout?: {
+      enabled?: boolean,
+      postLogoutSuccessSource?: (ctx: KoaContextWithOIDC) => CanBePromise<void | undefined>,
+      logoutSource?: (ctx: KoaContextWithOIDC, form: string) => CanBePromise<void | undefined>
     },
 
     mTLS?: {
@@ -1003,7 +1010,7 @@ export interface Configuration {
 
     frontchannelLogout?: {
       enabled?: boolean;
-      ack?: 2 | 'draft-02';
+      ack?: 2 | 'draft-02' | 'draft-03' | 'draft-04';
       logoutPendingSource?: (ctx: KoaContextWithOIDC, frames: string[], postLogoutRedirectUri?: string) => CanBePromise<void | undefined>;
     };
   };
