@@ -3,7 +3,7 @@ const path = require('path');
 const { randomBytes } = require('crypto');
 const https = require('https');
 
-const jose = require('jose');
+const { JWK } = require('jose');
 const helmet = require('koa-helmet');
 const pem = require('https-pem');
 
@@ -17,10 +17,10 @@ const tokenEndpointAuthMethods = ['private_key_jwt', 'self_signed_tls_client_aut
 
 const normalize = (cert) => cert.toString().replace(/(?:-----(?:BEGIN|END) CERTIFICATE-----|\s)/g, '');
 
-const JWK_PKJWTONE = jose.JWK.asKey(readFileSync(path.join(__dirname, 'pkjwtone.key')), { alg: 'PS256', use: 'sig' }).toJWK();
-const JWK_PKJWTTWO = jose.JWK.asKey(readFileSync(path.join(__dirname, 'pkjwttwo.key')), { alg: 'PS256', use: 'sig' }).toJWK();
-const JWK_MTLSONE = jose.JWK.asKey(readFileSync(path.join(__dirname, 'mtlsone.key')), { x5c: [normalize(readFileSync(path.join(__dirname, 'mtlsone.crt')))], alg: 'PS256', use: 'sig' }).toJWK();
-const JWK_MTLSTWO = jose.JWK.asKey(readFileSync(path.join(__dirname, 'mtlstwo.key')), { x5c: [normalize(readFileSync(path.join(__dirname, 'mtlstwo.crt')))], alg: 'PS256', use: 'sig' }).toJWK();
+const JWK_PKJWTONE = JWK.asKey(readFileSync(path.join(__dirname, 'pkjwtone.key')), { alg: 'PS256', use: 'sig' }).toJWK();
+const JWK_PKJWTTWO = JWK.asKey(readFileSync(path.join(__dirname, 'pkjwttwo.key')), { alg: 'PS256', use: 'sig' }).toJWK();
+const JWK_MTLSONE = JWK.asKey(readFileSync(path.join(__dirname, 'mtlsone.key')), { x5c: [normalize(readFileSync(path.join(__dirname, 'mtlsone.crt')))], alg: 'PS256', use: 'sig' }).toJWK();
+const JWK_MTLSTWO = JWK.asKey(readFileSync(path.join(__dirname, 'mtlstwo.key')), { x5c: [normalize(readFileSync(path.join(__dirname, 'mtlstwo.crt')))], alg: 'PS256', use: 'sig' }).toJWK();
 
 const fapi = new Provider(ISSUER, {
   acrValues: ['urn:mace:incommon:iap:silver'],
