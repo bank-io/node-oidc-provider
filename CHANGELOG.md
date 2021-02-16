@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.31.0](https://github.com/panva/node-oidc-provider/compare/v6.30.1...v6.31.0) (2021-01-19)
+
+
+### Features
+
+* end_session_endpoint now recognizes client_id and logout_hint ([9dd2b0e](https://github.com/panva/node-oidc-provider/commit/9dd2b0eaff06959f37e786506d5d2b072e917651))
+
+
+### Bug Fixes
+
+* keep grants that persist if logged out by that grant's client ([26449f5](https://github.com/panva/node-oidc-provider/commit/26449f5d00625a818674596fa8dd3155c069172b)), closes [#857](https://github.com/panva/node-oidc-provider/issues/857)
+
+
+### Performance
+
+* use native node's base64url encoding when available ([6149bd3](https://github.com/panva/node-oidc-provider/commit/6149bd37f75a2e49453c1ef25e2ec48fb6ba29f5))
+
+## [6.30.1](https://github.com/panva/node-oidc-provider/compare/v6.30.0...v6.30.1) (2021-01-13)
+
+
+### Bug Fixes
+
+* botched 6.30.0 release with a syntax error ([cd5f02a](https://github.com/panva/node-oidc-provider/commit/cd5f02a555dcead032178db36a31cce67d808577))
+
+## [6.30.0](https://github.com/panva/node-oidc-provider/compare/v6.29.11...v6.30.0) (2021-01-13)
+
+
+### Features
+
+* Authorization Server Issuer Identifier in Authorization Response ([3f67ee9](https://github.com/panva/node-oidc-provider/commit/3f67ee90bdebbf62caa8afa84fc4dc0ddaef2dba))
+* update JARM feature draft version to Implementer's Draft 01 ([0a021de](https://github.com/panva/node-oidc-provider/commit/0a021de697c67969a2a0ec030500a53ed185d42e))
+
+## [6.29.11](https://github.com/panva/node-oidc-provider/compare/v6.29.10...v6.29.11) (2021-01-12)
+
+
+### Bug Fixes
+
+* missing login prompt details ([c7b0036](https://github.com/panva/node-oidc-provider/commit/c7b00368d43d4c6c36e32f7e39cbc743e5fae501)), closes [#853](https://github.com/panva/node-oidc-provider/issues/853)
+
+## [6.29.10](https://github.com/panva/node-oidc-provider/compare/v6.29.9...v6.29.10) (2021-01-04)
+
+
+### Bug Fixes
+
+* html safe guard the action attribute in form post responses ([7cd6025](https://github.com/panva/node-oidc-provider/commit/7cd6025c0e9e66bac2288600ea0870d2e044663d))
+
 ## [6.29.9](https://github.com/panva/node-oidc-provider/compare/v6.29.8...v6.29.9) (2020-12-10)
 
 

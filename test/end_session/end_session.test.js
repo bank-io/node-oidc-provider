@@ -80,7 +80,7 @@ describe('logout endpoint', () => {
               });
           });
 
-          it('allows to redirect there', function () {
+          it('allows to redirect there (with id_token_hint)', function () {
             const params = {
               id_token_hint: this.idToken,
               post_logout_redirect_uri: 'https://client.example.com/logout/cb',
@@ -91,6 +91,82 @@ describe('logout endpoint', () => {
               .expect(() => {
                 const { state: { postLogoutRedirectUri } } = this.getSession();
                 expect(postLogoutRedirectUri).to.equal('https://client.example.com/logout/cb');
+              });
+          });
+
+          it('allows to redirect there (with client_id)', function () {
+            const params = {
+              client_id: 'client',
+              post_logout_redirect_uri: 'https://client.example.com/logout/cb',
+            };
+
+            return this.wrap({ route, verb, params })
+              .expect(200)
+              .expect(() => {
+                const { state: { postLogoutRedirectUri } } = this.getSession();
+                expect(postLogoutRedirectUri).to.equal('https://client.example.com/logout/cb');
+              });
+          });
+
+          it('allows to redirect there (with id_token_hint and client_id)', function () {
+            const params = {
+              client_id: 'client',
+              id_token_hint: this.idToken,
+              post_logout_redirect_uri: 'https://client.example.com/logout/cb',
+            };
+
+            return this.wrap({ route, verb, params })
+              .expect(200)
+              .expect(() => {
+                const { state: { postLogoutRedirectUri } } = this.getSession();
+                expect(postLogoutRedirectUri).to.equal('https://client.example.com/logout/cb');
+              });
+          });
+
+          it('requires client_id to match the id_token_hint', function () {
+            const params = {
+              client_id: 'client2',
+              id_token_hint: this.idToken,
+              post_logout_redirect_uri: 'https://client.example.com/logout/cb',
+            };
+
+            const emitSpy = sinon.spy();
+            const renderSpy = sinon.spy(i(this.provider).configuration(), 'renderError');
+            this.provider.once('end_session.error', emitSpy);
+
+            return this.wrap({ route, verb, params })
+              .set('Accept', 'text/html')
+              .expect(400)
+              .expect(() => {
+                expect(emitSpy.calledOnce).to.be.true;
+                expect(renderSpy.calledOnce).to.be.true;
+                const renderArgs = renderSpy.args[0];
+                expect(renderArgs[1]).to.have.property('error', 'invalid_request');
+                expect(renderArgs[1]).to.have.property('error_description', 'client_id does not match the provided id_token_hint');
+                expect(renderArgs[2]).to.be.an.instanceof(InvalidRequest);
+              });
+          });
+
+          it('requires client_id to be valid', function () {
+            const params = {
+              client_id: 'client2',
+              post_logout_redirect_uri: 'https://client.example.com/logout/cb',
+            };
+
+            const emitSpy = sinon.spy();
+            const renderSpy = sinon.spy(i(this.provider).configuration(), 'renderError');
+            this.provider.once('end_session.error', emitSpy);
+
+            return this.wrap({ route, verb, params })
+              .set('Accept', 'text/html')
+              .expect(400)
+              .expect(() => {
+                expect(emitSpy.calledOnce).to.be.true;
+                expect(renderSpy.calledOnce).to.be.true;
+                const renderArgs = renderSpy.args[0];
+                expect(renderArgs[1]).to.have.property('error', 'invalid_client');
+                expect(renderArgs[1]).to.have.property('error_description', 'client is invalid');
+                expect(renderArgs[2]).to.be.an.instanceof(InvalidClient);
               });
           });
 
@@ -188,7 +264,7 @@ describe('logout endpoint', () => {
           });
         });
 
-        it('without id_token_hint post_logout_redirect_uri may not be provided', function () {
+        it('without id_token_hint or client_id post_logout_redirect_uri may not be provided', function () {
           const emitSpy = sinon.spy();
           const renderSpy = sinon.spy(i(this.provider).configuration(), 'renderError');
           this.provider.once('end_session.error', emitSpy);
@@ -205,7 +281,7 @@ describe('logout endpoint', () => {
               expect(renderSpy.calledOnce).to.be.true;
               const renderArgs = renderSpy.args[0];
               expect(renderArgs[1]).to.have.property('error', 'invalid_request');
-              expect(renderArgs[1]).to.have.property('error_description', 'post_logout_redirect_uri can only be used in combination with id_token_hint');
+              expect(renderArgs[1]).to.have.property('error_description', 'post_logout_redirect_uri can only be used in combination with id_token_hint or client_id');
               expect(renderArgs[2]).to.be.an.instanceof(InvalidRequest);
             });
         });
@@ -363,30 +439,46 @@ describe('logout endpoint', () => {
 
       it('destroys complete session if user wants to', function () {
         const sessionId = this.getSessionId();
-        const adapter = this.TestAdapter.for('Session');
-        sinon.spy(adapter, 'destroy');
-        sinon.spy(adapter, 'upsert');
+        const sessionAdapter = this.TestAdapter.for('Session');
+        sinon.spy(sessionAdapter, 'destroy');
+        sinon.spy(sessionAdapter, 'upsert');
+        const authorizationCodeAdapter = this.TestAdapter.for('AuthorizationCode');
+        sinon.spy(authorizationCodeAdapter, 'revokeByGrantId');
+        const session = this.getSession();
 
-        this.getSession().state = { secret: '123', postLogoutRedirectUri: '/', clientId: 'client' };
+        session.state = { secret: '123', postLogoutRedirectUri: '/', clientId: 'client' };
+        session.authorizations.client.persistsLogout = true;
+
+        const [firstGrant, secondGrant] = Object.keys(session.authorizations)
+          .map((x) => session.authorizations[x].grantId);
 
         return this.agent.post('/session/end/confirm')
           .send({ xsrf: '123', logout: 'yes' })
           .type('form')
           .expect(302)
           .expect((response) => {
-            expect(adapter.destroy.called).to.be.true;
-            expect(adapter.upsert.called).not.to.be.true;
-            expect(adapter.destroy.withArgs(sessionId).calledOnce).to.be.true;
+            expect(sessionAdapter.destroy.called).to.be.true;
+            expect(sessionAdapter.upsert.called).not.to.be.true;
+            expect(sessionAdapter.destroy.withArgs(sessionId).calledOnce).to.be.true;
             expect(parseUrl(response.headers.location, true).query).not.to.have.property('client_id');
+            expect(authorizationCodeAdapter
+              .revokeByGrantId.calledOnce).to.be.true;
+            expect(authorizationCodeAdapter
+              .revokeByGrantId.withArgs(firstGrant).calledOnce).to.be.false;
+            expect(authorizationCodeAdapter
+              .revokeByGrantId.withArgs(secondGrant).calledOnce).to.be.true;
           });
       });
 
       it('only clears one clients session if user doesnt wanna log out (using post_logout_redirect_uri)', function () {
         const adapter = this.TestAdapter.for('Session');
         sinon.spy(adapter, 'destroy');
+        const authorizationCodeAdapter = this.TestAdapter.for('AuthorizationCode');
+        sinon.spy(authorizationCodeAdapter, 'revokeByGrantId');
         let session = this.getSession();
         const oldId = this.getSessionId();
         session.state = { secret: '123', postLogoutRedirectUri: 'https://rp.example.com/logout/cb', clientId: 'client' };
+        session.authorizations.client.persistsLogout = true;
 
         expect(session.authorizations.client).to.be.ok;
 
@@ -401,6 +493,8 @@ describe('logout endpoint', () => {
             expect(this.getSessionId()).not.to.eql(oldId);
             expect(adapter.destroy.calledOnceWith(oldId)).to.be.true;
             expect(parseUrl(response.headers.location, true).query).not.to.have.key('client_id');
+            expect(authorizationCodeAdapter
+              .revokeByGrantId.called).to.be.false;
           });
       });
 

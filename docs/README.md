@@ -611,7 +611,7 @@ async function findAccount(ctx, sub, token) {
 
 ### jwks
 
-JSON Web Key Set used by the provider for signing and encryption. The object must be in [JWK Set format](https://tools.ietf.org/html/rfc7517#section-5). All provided keys must be private keys. **Note:** Be sure to follow best practices for distributing private keying material and secrets for your respective target deployment environment.   
+JSON Web Key Set used by the provider for signing and decryption. The object must be in [JWK Set format](https://tools.ietf.org/html/rfc7517#section-5). All provided keys must be private keys. **Note:** Be sure to follow best practices for distributing private keying material and secrets for your respective target deployment environment.   
    
  Supported key types are:   
  - RSA
@@ -1110,6 +1110,20 @@ async function introspectionAllowedPolicy(ctx, client, token) {
 
 </details>
 
+### features.issAuthResp
+
+[draft-ietf-oauth-iss-auth-resp-00](https://tools.ietf.org/html/draft-ietf-oauth-iss-auth-resp-00) - OAuth 2.0 Authorization Server Issuer Identifier in Authorization Response  
+
+Enables `iss` authorization response parameter for responses without existing countermeasures against mix-up attacks.  
+
+
+_**default value**_:
+```js
+{
+  enabled: false
+}
+```
+
 ### features.jwtIntrospection
 
 [draft-ietf-oauth-jwt-introspection-response-09](https://tools.ietf.org/html/draft-ietf-oauth-jwt-introspection-response-09) - JWT Response for OAuth Token Introspection  
@@ -1127,7 +1141,7 @@ _**default value**_:
 
 ### features.jwtResponseModes
 
-[openid-financial-api-jarm-wd-02](https://openid.net/specs/openid-financial-api-jarm-wd-02.html) - JWT Secured Authorization Response Mode (JARM)  
+[openid-financial-api-jarm-ID1](https://openid.net/specs/openid-financial-api-jarm-ID1.html) - JWT Secured Authorization Response Mode (JARM)  
 
 Enables JWT Secured Authorization Responses   
   
@@ -2519,9 +2533,9 @@ _**default value**_:
       const { oidc } = ctx;
 
       return {
-        ...(oidc.params.max_age === undefined ? { max_age: oidc.params.max_age } : undefined),
-        ...(oidc.params.login_hint === undefined ? { login_hint: oidc.params.login_hint } : undefined),
-        ...(oidc.params.id_token_hint === undefined ? { id_token_hint: oidc.params.id_token_hint } : undefined),
+        ...(oidc.params.max_age === undefined ? undefined : { max_age: oidc.params.max_age }),
+        ...(oidc.params.login_hint === undefined ? undefined : { login_hint: oidc.params.login_hint }),
+        ...(oidc.params.id_token_hint === undefined ? undefined : { id_token_hint: oidc.params.id_token_hint }),
       };
     },
     checks: [
